@@ -59,10 +59,6 @@ def _build_ffmpeg_command(ffmpeg: str, plan: EditPlan, output_path: Path, log_di
         "setsar=1",
         "format=yuv420p",
     ]
-    if plan.pace == "fast":
-        video_filters.append("setpts=0.85*PTS")
-    elif plan.pace == "slow":
-        video_filters.append("setpts=1.15*PTS")
     if subtitle_file:
         video_filters.append(f"subtitles='{_escape_filter_path(subtitle_file)}'")
 

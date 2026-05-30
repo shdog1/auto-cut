@@ -52,6 +52,12 @@ python -m autocut.cli --date 2026-05-30 --dry-run
 python -m autocut.cli --date 2026-05-30
 ```
 
+真实渲染冒烟测试：
+
+```powershell
+.\scripts\smoke_test.ps1 -Ffmpeg D:\tools\ffmpeg\bin\ffmpeg.exe -Ffprobe D:\tools\ffmpeg\bin\ffprobe.exe
+```
+
 处理 `materials` 下所有日期目录：
 
 ```bash
@@ -84,6 +90,7 @@ logs/2026-05-30/plan.json
 - 支持自定义素材、输出、日志目录
 - 批量处理时单个日期失败会写 `error.log`
 - 支持 `--doctor` 检查本地 ffmpeg 环境
+- 支持真实渲染冒烟测试脚本
 
 ## 下一步
 

@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+.tools/
 
 materials/*
 !materials/.gitkeep
@@ -9,4 +10,3 @@ outputs/*
 !outputs/.gitkeep
 logs/*
 !logs/.gitkeep
-

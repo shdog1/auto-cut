@@ -1,0 +1,7 @@
+materials_dir: materials
+outputs_dir: outputs
+logs_dir: logs
+prompt_name: prompt.txt
+default_duration_seconds: 60
+default_resolution: 1080x1920
+

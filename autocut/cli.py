@@ -3,9 +3,10 @@ from __future__ import annotations
 import argparse
 from datetime import date as date_type
 from pathlib import Path
+import subprocess
 
 from .config import AppConfig, load_config, with_overrides
-from .editor import render_plan
+from .editor import render_plan, resolve_ffmpeg
 from .planner import build_plan
 from .scanner import list_material_dates, scan_materials
 
@@ -21,6 +22,8 @@ def main() -> int:
     parser.add_argument("--prompt-name", help="描述文件名，默认 prompt.txt")
     parser.add_argument("--duration", type=int, help="默认输出时长秒数，prompt 未写时使用")
     parser.add_argument("--resolution", help="输出分辨率，默认 1080x1920")
+    parser.add_argument("--ffmpeg", help="ffmpeg 可执行文件路径，默认读取 PATH 或 AUTOCUT_FFMPEG")
+    parser.add_argument("--doctor", action="store_true", help="检查运行环境")
     parser.add_argument("--dry-run", action="store_true", help="只生成计划和日志，不执行 ffmpeg")
     args = parser.parse_args()
 
@@ -32,7 +35,11 @@ def main() -> int:
         prompt_name=args.prompt_name,
         default_duration_seconds=args.duration,
         default_resolution=args.resolution,
+        ffmpeg_path=args.ffmpeg,
     )
+    if args.doctor:
+        return doctor(config)
+
     dates = list_material_dates(config) if args.all else [args.date]
     if not dates:
         print(f"没有找到素材目录: {config.materials_dir}")
@@ -66,6 +73,25 @@ def _write_error_log(config: AppConfig, material_date: str, error: Exception) ->
     log_dir = config.logs_dir / material_date
     log_dir.mkdir(parents=True, exist_ok=True)
     (log_dir / "error.log").write_text(f"{type(error).__name__}: {error}\n", encoding="utf-8")
+
+
+def doctor(config: AppConfig) -> int:
+    print(f"项目目录: {config.root_dir}")
+    print(f"素材目录: {config.materials_dir}")
+    print(f"输出目录: {config.outputs_dir}")
+    print(f"日志目录: {config.logs_dir}")
+
+    ffmpeg = resolve_ffmpeg(config.ffmpeg_path)
+    if not ffmpeg:
+        print("ffmpeg: 未找到")
+        print("修复: 安装 ffmpeg，或用 --ffmpeg / AUTOCUT_FFMPEG 指向 ffmpeg.exe")
+        return 1
+
+    print(f"ffmpeg: {ffmpeg}")
+    completed = subprocess.run([ffmpeg, "-version"], capture_output=True, text=True, check=False)
+    first_line = completed.stdout.splitlines()[0] if completed.stdout else "版本信息为空"
+    print(first_line)
+    return 0
 
 
 if __name__ == "__main__":

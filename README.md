@@ -28,6 +28,18 @@ logs/
 ffmpeg -version
 ```
 
+检查运行环境：
+
+```bash
+python -m autocut.cli --doctor
+```
+
+如果 ffmpeg 没有加入 PATH，可以直接指定：
+
+```bash
+python -m autocut.cli --date 2026-05-30 --ffmpeg D:\tools\ffmpeg\bin\ffmpeg.exe
+```
+
 生成剪辑计划，不实际渲染：
 
 ```bash
@@ -71,6 +83,7 @@ logs/2026-05-30/plan.json
 - 支持按日期处理或批量处理所有素材目录
 - 支持自定义素材、输出、日志目录
 - 批量处理时单个日期失败会写 `error.log`
+- 支持 `--doctor` 检查本地 ffmpeg 环境
 
 ## 下一步
 

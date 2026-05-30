@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -10,9 +11,9 @@ from .planner import EditPlan
 
 
 def render_plan(plan: EditPlan, config: AppConfig, dry_run: bool = False) -> Path:
-    ffmpeg = shutil.which("ffmpeg")
+    ffmpeg = resolve_ffmpeg(config.ffmpeg_path)
     if not ffmpeg and not dry_run:
-        raise RuntimeError("未找到 ffmpeg。请先安装 ffmpeg，并确保命令行可执行 `ffmpeg`。")
+        raise RuntimeError("未找到 ffmpeg。请先安装 ffmpeg，或设置 AUTOCUT_FFMPEG 指向 ffmpeg.exe。")
 
     output_dir = config.outputs_dir / plan.date
     log_dir = config.logs_dir / plan.date
@@ -32,6 +33,15 @@ def render_plan(plan: EditPlan, config: AppConfig, dry_run: bool = False) -> Pat
     if completed.returncode != 0:
         raise RuntimeError(f"ffmpeg 剪辑失败，查看日志: {log_dir / 'ffmpeg.stderr.log'}")
     return output_path
+
+
+def resolve_ffmpeg(ffmpeg_path: str) -> str | None:
+    path = Path(ffmpeg_path)
+    if path.is_file():
+        return str(path)
+    if os.sep in ffmpeg_path or (os.altsep and os.altsep in ffmpeg_path):
+        return None
+    return shutil.which(ffmpeg_path)
 
 
 def _build_ffmpeg_command(ffmpeg: str, plan: EditPlan, output_path: Path, log_dir: Path) -> list[str]:

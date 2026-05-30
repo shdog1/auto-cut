@@ -4,7 +4,7 @@ import json
 import unittest
 
 from autocut.config import load_config
-from autocut.editor import render_plan
+from autocut.editor import render_plan, resolve_ffmpeg
 from autocut.planner import EditPlan
 
 
@@ -34,6 +34,9 @@ class EditorTests(unittest.TestCase):
             self.assertIn("今日精彩片段", overlay)
             self.assertIn("关注我，查看更多", overlay)
             self.assertTrue(any("subtitles=" in item for item in plan_log["command"]))
+
+    def test_resolve_ffmpeg_missing_explicit_path(self) -> None:
+        self.assertIsNone(resolve_ffmpeg("Z:/missing/ffmpeg.exe"))
 
 
 if __name__ == "__main__":

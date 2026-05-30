@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from pathlib import Path
 
 
@@ -13,6 +14,7 @@ class AppConfig:
     prompt_name: str = "prompt.txt"
     default_duration_seconds: int = 60
     default_resolution: str = "1080x1920"
+    ffmpeg_path: str = "ffmpeg"
 
 
 def load_config(root_dir: Path | None = None) -> AppConfig:
@@ -22,6 +24,7 @@ def load_config(root_dir: Path | None = None) -> AppConfig:
         materials_dir=root / "materials",
         outputs_dir=root / "outputs",
         logs_dir=root / "logs",
+        ffmpeg_path=os.environ.get("AUTOCUT_FFMPEG", "ffmpeg"),
     )
 
 
@@ -33,6 +36,7 @@ def with_overrides(
     prompt_name: str | None = None,
     default_duration_seconds: int | None = None,
     default_resolution: str | None = None,
+    ffmpeg_path: str | None = None,
 ) -> AppConfig:
     return AppConfig(
         root_dir=config.root_dir,
@@ -42,6 +46,7 @@ def with_overrides(
         prompt_name=prompt_name or config.prompt_name,
         default_duration_seconds=default_duration_seconds or config.default_duration_seconds,
         default_resolution=default_resolution or config.default_resolution,
+        ffmpeg_path=ffmpeg_path or config.ffmpeg_path,
     )
 
 

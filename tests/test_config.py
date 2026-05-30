@@ -15,6 +15,7 @@ class ConfigTests(unittest.TestCase):
             prompt_name="idea.txt",
             default_duration_seconds=45,
             default_resolution="1920x1080",
+            ffmpeg_path="tools/ffmpeg.exe",
         )
 
         self.assertEqual(config.materials_dir, root / "daily")
@@ -23,6 +24,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(config.prompt_name, "idea.txt")
         self.assertEqual(config.default_duration_seconds, 45)
         self.assertEqual(config.default_resolution, "1920x1080")
+        self.assertEqual(config.ffmpeg_path, "tools/ffmpeg.exe")
 
 
 if __name__ == "__main__":
